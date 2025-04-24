@@ -15,9 +15,9 @@ async def get_all_job_posts(
 
     if title:
         query = query.where(JobPost.title.ilike(f"%{title}%"))
-    if title:
+    if company:
         query = query.where(JobPost.company.ilike(f"%{company}%"))
-    if title:
+    if location:
         query = query.where(JobPost.location.ilike(f"%{location}%"))
     if tags:
         query = query.where(JobPost.tags != None )  # skip posts with null tags
