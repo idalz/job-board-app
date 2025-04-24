@@ -6,9 +6,10 @@ load_dotenv()
 class Settings(BaseSettings):
     project_name: str
     api_v1_str: str
-    database_url: str
     admin_token: str
+    database_url: str
 
-    model_config = ConfigDict(env_file=".env")
+    class Config:
+        env_file = ".env"
 
 settings = Settings()
