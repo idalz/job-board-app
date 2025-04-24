@@ -14,6 +14,7 @@ def fetch_remoteok_jobs():
         company = row.find("h3", itemprop="name")
         location = row.find("div", class_="location")
         link = row.get("data-href")
+        tags = extract_tags(title.text.strip())
 
         if title and company and link:
             jobs.append({
@@ -21,7 +22,15 @@ def fetch_remoteok_jobs():
                 "company": company.text.strip(),
                 "location": location.text.strip() if location else "Remote",
                 "url": f"https://remoteok.com{link}",
-                "description": "Imported from RemoteOK"
+                "description": "Imported from RemoteOK",
+                "tags": tags
             })
 
     return jobs
+
+def extract_tags(text: str) -> list[str]:
+    keywords = [
+        "python", "javascript", "react", "fastapi", "aws", "docker", "sql",
+        "machine learning", "flask", "django", "graphql", "node", "typescript"
+    ]
+    return [kw for kw in keywords if kw.lower() in text.lower()]

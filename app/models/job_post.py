@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, ARRAY
 from app.db.base import Base
 
 class JobPost(Base):
@@ -10,4 +10,5 @@ class JobPost(Base):
     location = Column(String,  nullable=True)
     description = Column(Text, nullable=True)
     url = Column(String, nullable=True, unique=True)
+    tags = Column(ARRAY(String), default=[])
     
