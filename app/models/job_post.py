@@ -9,5 +9,5 @@ class JobPost(Base):
     company = Column(String, nullable=False)
     location = Column(String,  nullable=True)
     description = Column(Text, nullable=True)
-    url = Column(String, nhullable=True, unique=True)
+    url = Column(String, nullable=True, unique=True)
     
