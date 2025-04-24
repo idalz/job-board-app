@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Board App</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Job Board</h1>
+  </header>
+
+  <section id="search-filter">
+    <input type="text" id="searchInput" placeholder="Search jobs..." />
+    <button onclick="searchJobs()">Search</button>
+    <div id="filters">
+      <!-- Filters will go here -->
+    </div>
+  </section>
+
+  <main id="jobListings">
+    <!-- Jobs will be rendered here -->
+  </main>
+
+  <script>
+    async function fetchJobs(query = '') {
+      try {
+        const url = query
+          ? `/api/v1/job-posts/?title=${encodeURIComponent(query)}`
+          : '/api/v1/job-posts/';
+        const res = await fetch(url);
+        const jobs = await res.json();
+
+        const jobListings = document.getElementById('jobListings');
+        jobListings.innerHTML = '';
+
+        jobs.forEach(job => {
+          const jobCard = document.createElement('div');
+          jobCard.className = 'job-card';
+          jobCard.innerHTML = `
+            <h2>${job.title}</h2>
+            <p><strong>ID:</strong> ${job.id}</p>
+            <p><strong>Company:</strong> ${job.company}</p>
+            <p><strong>Location:</strong> ${job.location}</p>
+            <p><strong>Description:</strong> ${job.description}</p>
+            <p><strong>URL:</strong> <a href="${job.url}" target="_blank">${job.url}</a></p>
+            <p><strong>Tags:</strong> ${(job.tags || []).join(', ')}</p>
+          `;
+          jobListings.appendChild(jobCard);
+        });
+      } catch (err) {
+        console.error('Error fetching jobs:', err);
+      }
+    }
+
+    function searchJobs() {
+      const query = document.getElementById('searchInput').value;
+      fetchJobs(query);
+    }
+
+    // Initial fetch
+    fetchJobs();
+  </script>
+</body>
+</html>

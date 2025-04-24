@@ -9,3 +9,4 @@ pydantic-settings
 alembic
 requests 
 beautifulsoup4
+jinja2
