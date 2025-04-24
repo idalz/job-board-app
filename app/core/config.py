@@ -4,6 +4,7 @@ class Settings(BaseSettings):
     project_name: str
     api_v1_str: str
     database_url: str
+    scrape_secret_token: str
 
     class Config:
         env_file = ".env"

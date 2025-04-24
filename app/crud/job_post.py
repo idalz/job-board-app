@@ -11,7 +11,21 @@ async def create_job_post(db: AsyncSession, job_post: JobPostCreate) -> JobPost:
     await db.refresh(db_post)
     return db_post
 
-async def get_all_job_posts(db: AsyncSession):
+async def get_all_job_posts(  
+    db: AsyncSession,
+    title: str | None = None,
+    company: str | None = None,
+    location: str | None = None
+):
+    query = select(JobPost)
+
+    if title:
+        query = query.where(JobPost.title.ilike(f"%{title}%"))
+    if title:
+        query = query.where(JobPost.company.ilike(f"%{company}%"))
+    if title:
+        query = query.where(JobPost.location.ilike(f"%{location}%"))
+    
     result = await db.execute(select(JobPost))
     return result.scalars().all()
 

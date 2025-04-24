@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.config import settings
 from app.schemas.job_post import JobPostCreate, JobPostOut
 from app.crud import job_post as crud
 from app.db.deps import get_db
+from app.services.job_importer import scrape_and_store_jobs
+from app.scraper.remoteok import fetch_remoteok_jobs
+from app.scraper.weworkremotely import fetch_weworkremotely_jobs
 from typing import List
 
 router = APIRouter()
@@ -12,8 +16,13 @@ async def create(job: JobPostCreate, db: AsyncSession = Depends(get_db)):
     return await crud.create_job_post(db, job)
 
 @router.get("/", response_model=List[JobPostOut])
-async def read_all(db: AsyncSession = Depends(get_db)):
-    return await crud.get_all_job_posts(db)
+async def read_all(
+    title: str | None = Query(None),
+    company: str | None = Query(None),
+    location: str | None = Query(None),
+    db: AsyncSession = Depends(get_db)
+):
+    return await crud.get_all_job_posts(db, title=title, company=company, location=location)
 
 @router.get("/{job_id}", response_model=JobPostOut)
 async def read_one(job_id: int, db: AsyncSession = Depends(get_db)):
@@ -35,3 +44,19 @@ async def delete(job_id: int, db: AsyncSession = Depends(get_db)):
     if not deleted:
         raise HTTPException(status_code=404, detail="Job not found")
     return {"ok": True}
+
+@router.post("/scrape-remoteok")
+async def scrape_jobs(db: AsyncSession = Depends(get_db), x_token: str = Header(...)):
+    if x_token != settings.scrape_secret_token:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    result = await scrape_and_store_jobs(fetch_remoteok_jobs, db)
+    return result
+
+# Commented out
+#@router.post("/scrape-wwr")
+#async def scrape_jobs(db: AsyncSession = Depends(get_db),x_token: str = Header(...)):
+#    if x_token != settings.scrape_secret_token:
+#        raise HTTPException(status_code=403, detail="Forbidden")
+#
+#    result = await scrape_and_store_jobs(fetch_weworkremotely_jobs, db)
+#    return result
