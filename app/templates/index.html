@@ -65,7 +65,7 @@
       const title = document.getElementById('searchInput').value;
       const company = document.getElementById('companyInput').value;
       const location = document.getElementById('locationInput').value;
-      const tagsInput = document.getElementById('tagsInput').value;
+      const tagsInput = document.getElementById('tagsInput').value.toLowerCase();
 
       const params = { title, company, location };
 
