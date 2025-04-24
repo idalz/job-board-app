@@ -17,6 +17,7 @@ def fetch_weworkremotely_jobs():
         company = li.select_one("p.new-listing__company-name")
         location = li.select_one("div.new-listing__company-headquarters")
         anchor = li.select_one("a[href^='/remote-jobs/']")
+        tags = extract_tags(title.text.strip())
 
         if anchor and title and company:
             job_url = f"https://weworkremotely.com{anchor['href']}"
@@ -25,7 +26,15 @@ def fetch_weworkremotely_jobs():
                 "company": company.text.strip(),
                 "location": location.text.strip() if location else "Remote",
                 "url": job_url,
-                "description": "Imported from We Work Remotely"
+                "description": "Imported from We Work Remotely",
+                "tags": tags
             })
 
     return jobs
+
+def extract_tags(text: str) -> list[str]:
+    keywords = [
+        "python", "javascript", "react", "fastapi", "aws", "docker", "sql",
+        "machine learning", "flask", "django", "graphql", "node", "typescript"
+    ]
+    return [kw for kw in keywords if kw.lower() in text.lower()]
