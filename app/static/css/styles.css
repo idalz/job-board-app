@@ -173,3 +173,13 @@ button.delete {
 button.delete:hover {
   background-color: #e53935;  
 }
+
+button.logout {
+  background-color: #8d2720;  
+  color: white;
+}
+
+button.logout:hover {
+  background-color: #740f0d;  
+}
+
