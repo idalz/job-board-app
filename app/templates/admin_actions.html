@@ -74,7 +74,7 @@
         description: document.getElementById('description').value,
       };
   
-      const token = localStorage.getItem('adminToken');  // Retrieve token from localStorage
+      const token = localStorage.getItem('adminToken'); 
       const endpoint = editId ? `/api/v1/job-posts/${editId}` : '/api/v1/job-posts/';
       const method = editId ? 'PUT' : 'POST';
   
@@ -89,12 +89,12 @@
   
       const messageDiv = document.getElementById('message');
       if (res.ok) {
-        messageDiv.innerText = editId ? '✅ Job updated!' : '✅ Job posted successfully!';
+        messageDiv.innerText = editId ? 'Job updated!' : 'Job posted successfully!';
         messageDiv.style.color = 'green';
         if (!editId) document.getElementById('postJobForm').reset();
       } else {
         const error = await res.json();
-        messageDiv.innerText = `❌ Error: ${error.detail || 'Unknown error'}`;
+        messageDiv.innerText = `Error: ${error.detail || 'Unknown error'}`;
         messageDiv.style.color = 'red';
       }
     });

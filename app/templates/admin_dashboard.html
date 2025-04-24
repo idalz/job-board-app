@@ -28,7 +28,6 @@
     <section style="max-width: 1000px; margin: auto;">
 
       <div id="admin-actions">
-        <!-- Redirect to Admin Actions page to Create or Update Job -->
         <button onclick="window.location.href='/admin-actions'">Create Job</button>
         <button onclick="loadJobs()">Load Jobs</button>
         <button onclick="logout()">Logout</button>
@@ -54,7 +53,6 @@
           </tr>
         </thead>
         <tbody id="jobTableBody">
-          <!-- Job rows will be dynamically filled here -->
         </tbody>
       </table>
     </section>
@@ -83,7 +81,7 @@
     }
 
     async function deleteJob(jobId) {
-      const token = localStorage.getItem('adminToken'); // Fetch token from localStorage
+      const token = localStorage.getItem('adminToken'); 
       if (!confirm(`Are you sure you want to delete job #${jobId}?`)) return;
 
       const res = await fetch(`/api/v1/job-posts/${jobId}`, {
@@ -104,12 +102,12 @@
     }
 
     function editJob(jobId) {
-      window.location.href = `/admin-actions?edit=${jobId}`;  // Redirect to admin actions to update the job
+      window.location.href = `/admin-actions?edit=${jobId}`;  
     }
 
     async function scrapeJobs() {
       const source = document.getElementById('scrapeSource').value;
-      const token = localStorage.getItem('adminToken'); // Fetch token from localStorage
+      const token = localStorage.getItem('adminToken'); 
 
       let endpoint = '/api/v1/job-posts/scrape-remoteok';
       if (source === 'wwr') {
@@ -134,8 +132,8 @@
     }
 
     function logout() {
-      localStorage.removeItem('adminToken');  // Remove the token from localStorage
-      window.location.href = '/admin-login';  // Redirect to login page
+      localStorage.removeItem('adminToken'); 
+      window.location.href = '/admin-login';  
     }
 
   </script>

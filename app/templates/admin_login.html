@@ -30,20 +30,20 @@
 
       const token = document.getElementById('adminToken').value;
 
-      // Send token to validate and access admin dashboard route
+    
       const res = await fetch('/admin-dashboard', {
         method: 'GET',
         headers: {
-          'x-token': token  // Include the token in the header for validation
+          'x-token': token 
         }
       });
 
       const messageDiv = document.getElementById('message');
       if (res.ok) {
         localStorage.setItem('adminToken', token);
-        window.location.href = '/admin-dashboard';  // Redirect to admin dashboard if valid token
+        window.location.href = '/admin-dashboard';  
       } else {
-        messageDiv.innerText = `❌ Invalid token: Access denied`;
+        messageDiv.innerText = `Invalid token: Access denied`;
         messageDiv.style.color = 'red';
       }
     });
