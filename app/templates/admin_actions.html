@@ -1,4 +1,17 @@
 <!DOCTYPE html>
+<script>
+  window.addEventListener('pageshow', (event) => {
+      if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+          if (!localStorage.getItem('adminToken')) {
+              location.href = '/admin-login';
+          }
+      }
+  });
+
+  if (!localStorage.getItem('adminToken')) {
+      window.location.href = '/admin-login'; 
+    }
+</script>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -22,33 +35,36 @@
         <textarea id="description" placeholder="Description"></textarea>
         <input type="password" id="token" placeholder="Admin Token" required />
         <button type="submit">Submit</button>
+        <button onclick="window.location.href='/admin-dashboard'">Dashboard</button>
       </form>
       <div id="message"></div>
+
+      
     </section>
   </main>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const editId = params.get('edit');
-
+  
     async function loadJobForEdit(jobId) {
       const res = await fetch(`/api/v1/job-posts/${jobId}`);
       if (!res.ok) return;
       const job = await res.json();
-
+  
       document.getElementById('title').value = job.title;
       document.getElementById('company').value = job.company;
       document.getElementById('location').value = job.location || '';
       document.getElementById('url').value = job.url;
       document.getElementById('tags').value = (job.tags || []).join(', ');
       document.getElementById('description').value = job.description || '';
-
+  
       document.querySelector('button[type="submit"]').textContent = 'Update Job';
     }
-
+  
     document.getElementById('postJobForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-
+  
       const job = {
         title: document.getElementById('title').value,
         company: document.getElementById('company').value,
@@ -57,11 +73,11 @@
         tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(Boolean),
         description: document.getElementById('description').value,
       };
-
-      const token = document.getElementById('token').value;
+  
+      const token = localStorage.getItem('adminToken');  // Retrieve token from localStorage
       const endpoint = editId ? `/api/v1/job-posts/${editId}` : '/api/v1/job-posts/';
       const method = editId ? 'PUT' : 'POST';
-
+  
       const res = await fetch(endpoint, {
         method,
         headers: {
@@ -70,7 +86,7 @@
         },
         body: JSON.stringify(job)
       });
-
+  
       const messageDiv = document.getElementById('message');
       if (res.ok) {
         messageDiv.innerText = editId ? '✅ Job updated!' : '✅ Job posted successfully!';
@@ -82,7 +98,7 @@
         messageDiv.style.color = 'red';
       }
     });
-
+  
     if (editId) {
       loadJobForEdit(editId);
     }

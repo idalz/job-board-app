@@ -1,5 +1,4 @@
 from sqlalchemy import select
-from sqlalchemy.exc import NoResultFound
 from app.models.job_post import JobPost
 from app.schemas.job_post import JobPostCreate
 from sqlalchemy.ext.asyncio import AsyncSession

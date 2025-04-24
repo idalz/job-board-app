@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, Header, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.config import settings
 from app.schemas.job_post import JobPostCreate, JobPostOut
 from app.crud import job_post as crud
 from app.db.deps import get_db

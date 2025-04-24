@@ -1,4 +1,17 @@
 <!DOCTYPE html>
+<script>
+  window.addEventListener('pageshow', (event) => {
+      if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+          if (!localStorage.getItem('adminToken')) {
+              location.href = '/admin-login';
+          }
+      }
+  });
+
+  if (!localStorage.getItem('adminToken')) {
+      window.location.href = '/admin-login'; 
+    }
+</script>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -13,16 +26,20 @@
 
   <main>
     <section style="max-width: 1000px; margin: auto;">
-      <div style="display: flex; gap: 1rem; align-items: center;">
-        <input type="password" id="adminToken" placeholder="Enter Admin Token" />
-        <button onclick="loadJobs()">🔄 Load Jobs</button>
-        <button onclick="window.location.href='/admin'">+ Create Job</button>
 
+      <div id="admin-actions">
+        <!-- Redirect to Admin Actions page to Create or Update Job -->
+        <button onclick="window.location.href='/admin-actions'">Create Job</button>
+        <button onclick="loadJobs()">Load Jobs</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+
+      <div id="scrape-actions">
+        <button onclick="scrapeJobs()">Scrape Jobs</button>
         <select id="scrapeSource">
           <option value="remoteok">RemoteOK</option>
           <option value="wwr">WeWorkRemotely</option>
         </select>
-        <button onclick="scrapeJobs()">🕷️ Scrape Jobs</button>
       </div>
 
       <div id="message" style="margin-top: 1rem;"></div>
@@ -37,7 +54,7 @@
           </tr>
         </thead>
         <tbody id="jobTableBody">
-          <!-- Jobs will load here -->
+          <!-- Job rows will be dynamically filled here -->
         </tbody>
       </table>
     </section>
@@ -57,8 +74,8 @@
           <td>${job.title}</td>
           <td>${job.company}</td>
           <td>
-            <button onclick="editJob(${job.id})">Edit</button>
-            <button onclick="deleteJob(${job.id})">Delete</button>
+            <button class="edit" onclick="editJob(${job.id})">Edit</button>
+            <button class="delete" onclick="deleteJob(${job.id})">Delete</button>
           </td>
         `;
         tbody.appendChild(row);
@@ -66,7 +83,7 @@
     }
 
     async function deleteJob(jobId) {
-      const token = document.getElementById('adminToken').value;
+      const token = localStorage.getItem('adminToken'); // Fetch token from localStorage
       if (!confirm(`Are you sure you want to delete job #${jobId}?`)) return;
 
       const res = await fetch(`/api/v1/job-posts/${jobId}`, {
@@ -76,7 +93,7 @@
 
       const msg = document.getElementById('message');
       if (res.ok) {
-        msg.innerText = `✅ Job #${jobId} deleted.`;
+        msg.innerText = `Job #${jobId} deleted.`;
         msg.style.color = 'green';
         loadJobs();
       } else {
@@ -87,12 +104,12 @@
     }
 
     function editJob(jobId) {
-      window.location.href = `/admin?edit=${jobId}`;
+      window.location.href = `/admin-actions?edit=${jobId}`;  // Redirect to admin actions to update the job
     }
 
     async function scrapeJobs() {
       const source = document.getElementById('scrapeSource').value;
-      const token = document.getElementById('adminToken').value;
+      const token = localStorage.getItem('adminToken'); // Fetch token from localStorage
 
       let endpoint = '/api/v1/job-posts/scrape-remoteok';
       if (source === 'wwr') {
@@ -115,6 +132,12 @@
         msg.style.color = 'red';
       }
     }
+
+    function logout() {
+      localStorage.removeItem('adminToken');  // Remove the token from localStorage
+      window.location.href = '/admin-login';  // Redirect to login page
+    }
+
   </script>
 </body>
 </html>

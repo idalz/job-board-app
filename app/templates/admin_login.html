@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Admin Login</h1>
+  </header>
+
+  <main>
+    <section style="max-width: 400px; margin: auto;">
+      <form id="adminLoginForm">
+        <input type="password" id="adminToken" placeholder="Enter Admin Token" required />
+        <button type="submit">Login</button>
+      </form>
+      <div id="message" style="margin-top: 1rem;"></div>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = document.getElementById('adminToken').value;
+
+      // Send token to validate and access admin dashboard route
+      const res = await fetch('/admin-dashboard', {
+        method: 'GET',
+        headers: {
+          'x-token': token  // Include the token in the header for validation
+        }
+      });
+
+      const messageDiv = document.getElementById('message');
+      if (res.ok) {
+        localStorage.setItem('adminToken', token);
+        window.location.href = '/admin-dashboard';  // Redirect to admin dashboard if valid token
+      } else {
+        messageDiv.innerText = `❌ Invalid token: Access denied`;
+        messageDiv.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
