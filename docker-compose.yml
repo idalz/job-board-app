@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  job-board-app:
+    build: .
+    container_name: job-board-app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    restart: always
+
+  db:
+    image: postgres:15
+    container_name: job_board_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2486
+      POSTGRES_DB: job_board_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+    restart: always
+
+volumes:
+  postgres_data: 
