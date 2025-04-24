@@ -19,7 +19,8 @@ async def read_all(
     tags: list[str] | None = Query(None),
     db: AsyncSession = Depends(get_db)
 ):
-    return await crud.get_all_job_posts(db, title=title, company=company, location=location, tags=tags)
+    jobs = await crud.get_all_job_posts(db, title, company, location, tags)
+    return [JobPostOut.model_validate(job) for job in jobs]
 
 @router.get("/{job_id}", response_model=JobPostOut)
 async def read_one(job_id: int, db: AsyncSession = Depends(get_db)):

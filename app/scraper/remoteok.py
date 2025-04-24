@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from app.scraper.utils import extract_tags
 
 def fetch_remoteok_jobs():
     url = "https://remoteok.com/remote-dev-jobs"
@@ -14,9 +15,11 @@ def fetch_remoteok_jobs():
         company = row.find("h3", itemprop="name")
         location = row.find("div", class_="location")
         link = row.get("data-href")
-        tags = extract_tags(title.text.strip())
-
+        
         if title and company and link:
+            raw_tags = extract_tags(title.text.strip())
+            tags = [tag.strip().lower() for tag in raw_tags if tag and tag.strip()]
+
             jobs.append({
                 "title": title.text.strip(),
                 "company": company.text.strip(),
@@ -27,10 +30,3 @@ def fetch_remoteok_jobs():
             })
 
     return jobs
-
-def extract_tags(text: str) -> list[str]:
-    keywords = [
-        "python", "javascript", "react", "fastapi", "aws", "docker", "sql",
-        "machine learning", "flask", "django", "graphql", "node", "typescript"
-    ]
-    return [kw for kw in keywords if kw.lower() in text.lower()]

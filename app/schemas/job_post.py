@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
 
 class JobPostBase(BaseModel):
@@ -7,14 +7,12 @@ class JobPostBase(BaseModel):
     location: str | None = None
     description: str | None = None
     url: str | None = None
-    tags: Optional[List[str]] = []
+    tags: Optional[List[str]] = Field(default_factory=list)
 
 class JobPostCreate(JobPostBase):
     pass
 
 class JobPostOut(JobPostBase):
     id: int
-
-    class ConfigDict:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         

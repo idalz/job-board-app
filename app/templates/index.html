@@ -12,11 +12,11 @@
   </header>
 
   <section id="search-filter">
-    <input type="text" id="searchInput" placeholder="Search jobs..." />
+    <input type="text" id="searchInput" placeholder="Search title..." />
+    <input type="text" id="companyInput" placeholder="Company..." />
+    <input type="text" id="locationInput" placeholder="Location..." />
+    <input type="text" id="tagsInput" placeholder="Tags (comma separated)..." />
     <button onclick="searchJobs()">Search</button>
-    <div id="filters">
-      <!-- Filters will go here -->
-    </div>
   </section>
 
   <main id="jobListings">
@@ -24,11 +24,19 @@
   </main>
 
   <script>
-    async function fetchJobs(query = '') {
+    async function fetchJobs(params = {}) {
       try {
-        const url = query
-          ? `/api/v1/job-posts/?title=${encodeURIComponent(query)}`
-          : '/api/v1/job-posts/';
+        const url = new URL('/api/v1/job-posts/', window.location.origin);
+
+        // Build query string correctly
+        Object.entries(params).forEach(([key, val]) => {
+          if (Array.isArray(val)) {
+            val.forEach(v => url.searchParams.append(key, v));
+          } else if (val) {
+            url.searchParams.append(key, val);
+          }
+        });
+
         const res = await fetch(url);
         const jobs = await res.json();
 
@@ -40,7 +48,6 @@
           jobCard.className = 'job-card';
           jobCard.innerHTML = `
             <h2>${job.title}</h2>
-            <p><strong>ID:</strong> ${job.id}</p>
             <p><strong>Company:</strong> ${job.company}</p>
             <p><strong>Location:</strong> ${job.location}</p>
             <p><strong>Description:</strong> ${job.description}</p>
@@ -55,8 +62,21 @@
     }
 
     function searchJobs() {
-      const query = document.getElementById('searchInput').value;
-      fetchJobs(query);
+      const title = document.getElementById('searchInput').value;
+      const company = document.getElementById('companyInput').value;
+      const location = document.getElementById('locationInput').value;
+      const tagsInput = document.getElementById('tagsInput').value;
+
+      const params = { title, company, location };
+
+      if (tagsInput) {
+        const tagsArray = tagsInput.split(',').map(tag => tag.trim()).filter(Boolean);
+        if (tagsArray.length > 0) {
+          params['tags'] = tagsArray;
+        }
+      }
+
+      fetchJobs(params);
     }
 
     // Initial fetch

@@ -24,7 +24,7 @@ async def get_all_job_posts(
         for tag in tags:
             query = query.where(JobPost.tags.any(tag))
     
-    result = await db.execute(select(JobPost))
+    result = await db.execute(query)
     return result.scalars().all()
 
 async def get_job_post(db: AsyncSession, job_id: int):

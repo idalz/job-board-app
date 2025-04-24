@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from app.scraper.utils import extract_tags
 
 def fetch_weworkremotely_jobs():
     url = "https://weworkremotely.com/categories/remote-programming-jobs"
@@ -17,7 +18,8 @@ def fetch_weworkremotely_jobs():
         company = li.select_one("p.new-listing__company-name")
         location = li.select_one("div.new-listing__company-headquarters")
         anchor = li.select_one("a[href^='/remote-jobs/']")
-        tags = extract_tags(title.text.strip())
+        raw_tags = extract_tags(title.text.strip())
+        tags = [tag.strip().lower() for tag in raw_tags if tag and tag.strip()]
 
         if anchor and title and company:
             job_url = f"https://weworkremotely.com{anchor['href']}"
@@ -31,10 +33,3 @@ def fetch_weworkremotely_jobs():
             })
 
     return jobs
-
-def extract_tags(text: str) -> list[str]:
-    keywords = [
-        "python", "javascript", "react", "fastapi", "aws", "docker", "sql",
-        "machine learning", "flask", "django", "graphql", "node", "typescript"
-    ]
-    return [kw for kw in keywords if kw.lower() in text.lower()]
