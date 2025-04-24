@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Job Post</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Post a New Job</h1>
+  </header>
+
+  <main>
+    <section id="job-form">
+      <form id="postJobForm">
+        <input type="text" id="title" placeholder="Title" required />
+        <input type="text" id="company" placeholder="Company" required />
+        <input type="text" id="location" placeholder="Location" />
+        <input type="url" id="url" placeholder="Job URL" required />
+        <input type="text" id="tags" placeholder="Tags (comma separated)" />
+        <textarea id="description" placeholder="Description"></textarea>
+        <input type="password" id="token" placeholder="Admin Token" required />
+        <button type="submit">Submit</button>
+      </form>
+      <div id="message"></div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const editId = params.get('edit');
+
+    async function loadJobForEdit(jobId) {
+      const res = await fetch(`/api/v1/job-posts/${jobId}`);
+      if (!res.ok) return;
+      const job = await res.json();
+
+      document.getElementById('title').value = job.title;
+      document.getElementById('company').value = job.company;
+      document.getElementById('location').value = job.location || '';
+      document.getElementById('url').value = job.url;
+      document.getElementById('tags').value = (job.tags || []).join(', ');
+      document.getElementById('description').value = job.description || '';
+
+      document.querySelector('button[type="submit"]').textContent = 'Update Job';
+    }
+
+    document.getElementById('postJobForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const job = {
+        title: document.getElementById('title').value,
+        company: document.getElementById('company').value,
+        location: document.getElementById('location').value,
+        url: document.getElementById('url').value,
+        tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(Boolean),
+        description: document.getElementById('description').value,
+      };
+
+      const token = document.getElementById('token').value;
+      const endpoint = editId ? `/api/v1/job-posts/${editId}` : '/api/v1/job-posts/';
+      const method = editId ? 'PUT' : 'POST';
+
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': token
+        },
+        body: JSON.stringify(job)
+      });
+
+      const messageDiv = document.getElementById('message');
+      if (res.ok) {
+        messageDiv.innerText = editId ? '✅ Job updated!' : '✅ Job posted successfully!';
+        messageDiv.style.color = 'green';
+        if (!editId) document.getElementById('postJobForm').reset();
+      } else {
+        const error = await res.json();
+        messageDiv.innerText = `❌ Error: ${error.detail || 'Unknown error'}`;
+        messageDiv.style.color = 'red';
+      }
+    });
+
+    if (editId) {
+      loadJobForEdit(editId);
+    }
+  </script>
+</body>
+</html>

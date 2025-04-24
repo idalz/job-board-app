@@ -44,7 +44,7 @@ async def update_job_post(db: AsyncSession, job_id: int, job_data: JobPostCreate
         for field, value in job_data.model_dump().items():
             setattr(db_post, field, value)
         await db.commit()
-        await db.refresh()
+        await db.refresh(db_post)
     return  db_post
 
 async def delete_job_post(db: AsyncSession, job_id: int):

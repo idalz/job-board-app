@@ -21,3 +21,11 @@ app.include_router(
 @app.get("/", response_class=HTMLResponse)
 async def get_index_page(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/admin", response_class=HTMLResponse)
+async def serve_admin_page(request: Request):
+    return templates.TemplateResponse("admin.html", {"request": request})
+
+@app.get("/admin-dashboard", response_class=HTMLResponse)
+async def serve_admin_dashboard(request: Request):
+    return templates.TemplateResponse("admin_dashboard.html", {"request": request})
