@@ -15,6 +15,6 @@ class JobPostCreate(JobPostBase):
 class JobPostOut(JobPostBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    class ConfigDict:
+        from_attributes = True
         
