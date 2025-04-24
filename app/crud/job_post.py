@@ -32,6 +32,8 @@ async def get_job_post(db: AsyncSession, job_id: int):
     return result.scalar_one_or_none()
 
 async def create_job_post(db: AsyncSession, job_post: JobPostCreate) -> JobPost:
+    job_post.tags = [tag.lower() for tag in job_post.tags] if job_post.tags else []
+    
     db_post = JobPost(**job_post.model_dump())
     db.add(db_post)
     await db.commit()
@@ -39,6 +41,8 @@ async def create_job_post(db: AsyncSession, job_post: JobPostCreate) -> JobPost:
     return db_post
 
 async def update_job_post(db: AsyncSession, job_id: int, job_data: JobPostCreate):
+    job_data.tags = [tag.lower() for tag in job_data.tags] if job_data.tags else []
+    
     db_post = await get_job_post(db, job_id)
     if db_post:
         for field, value in job_data.model_dump().items():
