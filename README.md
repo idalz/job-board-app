@@ -65,8 +65,8 @@ A simple job aggregator web app built with **FastAPI**, **PostgreSQL**, and **Be
 
 ### Prerequisites
 
--Docker & Docker Compose
--Python 3.11 (for local dev)
+- Docker & Docker Compose
+- Python 3.11 (for local dev)
 
 1. Clone the repository
 
