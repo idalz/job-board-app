@@ -1,6 +1,6 @@
 # Job Board App
 
-A simple job aggregator web app built with **FastAPI**, **PostgreSQL**, and **BeautifulSoup**. Job seekers can search for dev jobs based on tags and keywords, while admins can manage listings, scrape new jobs, or create them manually.
+A full-stack job board aggregator with **FastAPI** and **PostgreSQL**, enabling search by tags and keywords. Integrated **BeautifulSoup** for multi-source job scraping and built a secure admin dashboard with **token-based** access.  
 
 ---
 
@@ -141,4 +141,4 @@ uvicorn app.main:app --reload
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
