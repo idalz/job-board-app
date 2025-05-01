@@ -45,9 +45,9 @@ A full-stack job board aggregator with **FastAPI** and **PostgreSQL**, enabling 
 
 ![Alt text](app_screenshots/board.png)
 
-2. Admins can login and create, update, delete or scrap with a click from different sites.
+2. Admins can login and create, update, delete or scrape with a click from different sites.
 
-- Admin login using his token:
+- Admin login using a secure token:
 
 ![Alt text](app_screenshots/admin-login.png)
 
@@ -75,7 +75,7 @@ git clone https://github.com/yourusername/job-board-app.git
 ```
 
 
-2. Set up enviroment variables:
+2. Set up environment variables:
 
 Create a `.env` file in the root directory (job-board-app) and add the following variables:
 
@@ -95,7 +95,7 @@ Run the following command to start the application and database container:
 docker-compose up --build
 ```
 
-This will build and start the `job-board-app` and `job_board_db` containers and run `albemic` (on start) to set up the database (create the `job_posts` table). 
+This will build and start the `job-board-app` and `job_board_db` containers and run `alembic` (on start) to set up the database (create the `job_posts` table). 
 
 4. Run the application:
 
